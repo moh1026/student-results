@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عرض نتائج الطلبة - ربيع 2025</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to left, #f0f4f8, #d9e2ec);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .card {
+      background-color: white;
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      margin-top: 2rem;
+    }
+    input {
+      padding: 0.7rem;
+      width: 70%;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 1.5rem;
+    }
+    .label {
+      font-weight: bold;
+      color: #34495e;
+    }
+  </style>
+</head>
+<body>
+  <h1>نظام عرض نتائج الطلبة - ربيع 2025</h1>
+  <div class="card">
+    <input type="text" id="studentId" placeholder="أدخل رقم القيد هنا" />
+    <button onclick="searchResult()">عرض النتيجة</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    // سيتم لاحقاً إدراج جميع بيانات الطلاب من ملف Excel بشكل تلقائي أو يدوي
+    const data = [];
+
+    async function loadData() {
+      const response = await fetch("students.json"); // يجب أن تحتوي على بيانات JSON المستخرجة من ملف Excel
+      const students = await response.json();
+      data.push(...students);
+    }
+
+    function searchResult() {
+      const id = document.getElementById('studentId').value.trim();
+      const student = data.find(s => s["رقم القيد"].toString() === id);
+      const resultDiv = document.getElementById('result');
+
+      if (student) {
+        resultDiv.innerHTML = `
+          <p><span class="label">الاسم:</span> ${student["الاسم"]}</p>
+          <p><span class="label">رقم القيد:</span> ${student["رقم القيد"]}</p>
+          <p><span class="label">درجة الحضور:</span> ${student["درجة الحضور"]} / 5</p>
+          <p><span class="label">درجة التطبيقات:</span> ${student["درجة التطبيقات"]} / 15</p>
+          <p><span class="label">الامتحان النصفي:</span> ${student["النصفي"]} / 20</p>
+          <p><span class="label">مجموع أعمال السنة:</span> ${student["أعمال السنة"]} / 40</p>
+        `;
+      } else {
+        resultDiv.innerHTML = `<p style="color:red;">رقم القيد غير موجود، يرجى التحقق.</p>`;
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
